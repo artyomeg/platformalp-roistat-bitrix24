@@ -1,0 +1,82 @@
+<script>
+// onload - set listeners
+window.onload = function (e) {
+    $('input[type="checkbox"]').change(function () {
+        updateAnswers();
+    });
+
+    $('button[data-action="slidenext"]').click(function () {
+        updateAnswers();
+    });
+}
+
+function updateQuizAnswersa() {
+    var quizText;
+
+    window.quizAnswers = [];
+
+    var slides = $('.swiper-slide');
+
+    var quizAnswersCanonical = [];
+
+    for (var i = 0; i < slides.length; i++) {
+        //
+        var answersItems = $(slides[i]).find('.widget-field [plp-field] [plp-field-item]');
+
+        if (answersItems.length > 0) {
+            // get list typeanswersItems
+            if ($(answersItems[0]).closest('[plp-field]').attr('plp-field') == 'radio-list') {
+                let checkedVariant = answersItems.find('input:checked');
+                quizText           = checkedVariant.closest('label').find('span').text();
+
+                let headerWrapper = $(slides[i]).find('.xs-force-center.textable').text();
+
+                window.quizAnswers.push({
+                    question: headerWrapper,
+                    answer:   quizText
+                });
+            } else {
+                quizText = "";
+
+                $.each(answersItems.find('input:checked'), function (key, value) {
+                    quizText += $(this).closest('label').find('span').text() + "; \r\n";
+                });
+
+                let headerWrapper = $(slides[i]).find('.xs-force-center.textable').text();
+
+                window.quizAnswers.push({
+                    question: headerWrapper,
+                    answer:   quizText
+                });
+            };
+        }
+    }
+
+    return window.quizAnswers;
+}
+
+function updateAnswers() {
+    window.quizAnswers = [];
+
+    updateQuizAnswersa();
+
+    setCanonicalView();
+
+    setContentToBlock();
+}
+
+function setCanonicalView() {
+    window.quizAnswersCanonical = [];
+
+    for (var i = 0; i < window.quizAnswers.length; i++) {
+        window.quizAnswersCanonical[i] = {};
+        window.quizAnswersCanonical[i][window.quizAnswers[i].question] = window.quizAnswers[i].answer.replace(/\r\n/g, "\n");
+    }
+}
+
+function setContentToBlock() {
+    document.getElementById('step-listener').innerHTML = JSON.stringify(window.quizAnswersCanonical);
+}
+</script>
+
+<div id="step-listener" style="display: none;"></div>
