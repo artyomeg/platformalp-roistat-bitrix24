@@ -1,0 +1,94 @@
+<script>
+// onload - set listeners
+window.onload = function(e){ 
+    console.log("ready!");
+	
+	$('input[type="checkbox"]').change(function () {
+		updateAnswers();
+    });
+	
+	$('button[data-action="slidenext"]').click(function () {
+		updateAnswers();
+    });
+}
+
+function getRadio(headerId, quizId) {
+	var quizText = $('#node' + quizId + '_meta input:checked').closest('label').find('span').text();
+
+	return {
+		question: $($('.node' + headerId)[0]).text(),
+		answer:   quizText
+	};
+}
+
+function getCheckbox(headerId, quizId) {
+	var quizText = "";
+
+	$.each( $('#node' + quizId + '_meta input:checked'), function( key, value ) {
+		quizText += $(this).closest('label').find('span').text() + "; \r\n" ;
+	});
+
+	return {
+		question: $($('.node' + headerId)[0]).text(),
+		answer:   quizText
+	};
+}
+
+function updateAnswers() {
+	window.quizAnswers = [];
+	
+	/* 1 */
+	window.quizAnswers.push(getRadio('13', '14'));
+
+	/* 2 */
+	window.quizAnswers.push(getCheckbox('27', '29'));
+
+	/* 3 */
+	window.quizAnswers.push(getRadio('40', '41'));
+
+	/* 4 */
+	window.quizAnswers.push(getRadio('49', '51'));
+
+	/* 5 */
+	window.quizAnswers.push(getRadio('68', '69'));
+
+	/* 6 */
+	window.quizAnswers.push(getCheckbox('91', '92'));
+
+	/* 7 */
+	window.quizAnswers.push(getRadio('106', '107'));
+
+	/* 8 */
+	window.quizAnswers.push(getRadio('114', '115'));
+
+	/* 9 */
+	window.quizAnswers.push(getCheckbox('129', '130'));
+
+	/* 10 */
+	window.quizAnswers.push(getRadio('144', '145'));
+
+	/* 11 */
+	window.quizAnswers.push(getRadio('152', '153'));
+	
+	setCanonicalView();
+	
+	setContentToBlock();
+}
+
+
+function setCanonicalView() {
+	window.quizAnswers2 = [];
+	
+	for (var i = 0; i < window.quizAnswers.length; i++) {
+		window.quizAnswers2[i] = {};
+		window.quizAnswers2[i][window.quizAnswers[i].question] = window.quizAnswers[i].answer.replace(/\r\n/g,"\n");
+    }
+}
+
+function setContentToBlock() {
+	document.getElementById('step-listener2').innerHTML = JSON.stringify(window.quizAnswers2);
+}
+</script>
+
+<div id="step-listener"></div>
+<div id="step-listener2"></div>
